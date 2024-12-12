@@ -35,8 +35,32 @@ export class CarsService {
     return this.carModel.findById(id).exec();
   }
 
-  async update(id: string, updateCarDto: CreateCarDto): Promise<Car> {
-    return this.carModel.findByIdAndUpdate(id, updateCarDto, { new: true }).exec();
+  async update(id: string, updateCarDto: CreateCarDto, files): Promise<Car> {
+    const updateFiles = {};
+    if(files.roadworthy_voucher) {
+      const roadworthy_voucher = await this.cloudinary.uploadImage(
+        files.roadworthy_voucher[0],
+      );
+      await unlink(files.roadworthy_voucher[0].path);
+      // @ts-expect-error: may be empty
+      updateFiles.roadworthy_voucher = roadworthy_voucher;
+    }
+   if(files.condition_report) {
+     const condition_report = await this.cloudinary.uploadImage(
+       files.condition_report[0],
+     );
+     await unlink(files.condition_report[0].path);
+     // @ts-expect-error: may be empty
+      updateFiles.condition_report = condition_report;
+   }
+   if(files.images) {
+     const images = await this.cloudinary.uploadMultipleImages(
+       files.images,
+     );
+     // @ts-expect-error: may be empty
+     updateFiles.images = images;
+   }
+    return this.carModel.findByIdAndUpdate(id, { ...updateCarDto, ...updateFiles }, { new: true }).exec();
   }
 
   async remove(id: string): Promise<Car> {

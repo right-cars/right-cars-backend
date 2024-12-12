@@ -34,8 +34,17 @@ export class CarsController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateCarDto: CreateCarDto) {
-    return this.carsService.update(id, updateCarDto);
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'images', maxCount: 12 },
+        { name: 'roadworthy_voucher', maxCount: 1 },
+        { name: 'condition_report', maxCount: 1 },
+      ],
+      multerConfig)
+  )
+  async update(@Param('id') id: string, @Body() updateCarDto: CreateCarDto, @UploadedFiles() files: { images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
+    return this.carsService.update(id, updateCarDto, files);
   }
 
   @Delete(':id')
