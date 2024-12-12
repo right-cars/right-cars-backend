@@ -12,7 +12,6 @@ async function bootstrap() {
   app.useGlobalFilters(new MongooseExceptionFilter());
 
   app.enableCors({
-    origin: ['http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
   });
