@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Car, CarDocument } from './car.schema';
 import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarStatusDto } from './dto/update-car-status.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import {unlink} from "node:fs/promises";
 
@@ -61,6 +62,13 @@ export class CarsService {
      updateFiles.images = images;
    }
     return this.carModel.findByIdAndUpdate(id, { ...updateCarDto, ...updateFiles }, { new: true }).exec();
+  }
+
+  async updateStatus(
+    id: string,
+    updateCarStatusDto: UpdateCarStatusDto,
+  ): Promise<Car> {
+    return this.carModel.findByIdAndUpdate(id, updateCarStatusDto, { new: true }).exec();
   }
 
   async remove(id: string): Promise<Car> {
