@@ -110,7 +110,7 @@ export class Car {
   @Prop({ default: 'active' })
   status: string;
 
-  @Prop({ default: 'cars' })
+  @Prop({ default: 'car' })
   type: string;
 }
 

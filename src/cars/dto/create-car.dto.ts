@@ -10,6 +10,7 @@ export class CreateCarDto {
   @IsString() price: string;
   @IsString() drive_type: string;
   @IsString() finance: string;
+  @IsString() type: string;
   @IsString() fuel_consumption: string;
   @IsString() body_type: string;
   @IsString() engine_capacity: string;
