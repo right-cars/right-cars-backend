@@ -67,14 +67,14 @@ export class Car {
   roadworthy_voucher: string;
 
   @Prop()
-  spare_key: string;
+  spare_key: boolean;
 
   // @Prop({ required: true })
   @Prop()
   condition_report: string;
 
   @Prop()
-  warranty: string;
+  warranty: boolean;
 
   @Prop()
   kilowatts: string;
