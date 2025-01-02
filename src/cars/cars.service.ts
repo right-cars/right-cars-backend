@@ -12,14 +12,22 @@ export class CarsService {
   constructor(@InjectModel(Car.name) private carModel: Model<CarDocument>, private cloudinary: CloudinaryService) {}
 
   async create(createCarDto: CreateCarDto, files): Promise<Car> {
-    const roadworthy_voucher = await this.cloudinary.uploadImage(
-      files.roadworthy_voucher[0],
-    );
-    await unlink(files.roadworthy_voucher[0].path);
-    const condition_report = await this.cloudinary.uploadImage(
-      files.condition_report[0],
-    );
-    await unlink(files.condition_report[0].path);
+    let roadworthy_voucher = null;
+    if(files.roadworthy_voucher) {
+      roadworthy_voucher = await this.cloudinary.uploadImage(
+        files.roadworthy_voucher[0],
+      );
+      await unlink(files.roadworthy_voucher[0].path);
+    }
+
+    let condition_report = null;
+    if(files.condition_report) {
+      condition_report = await this.cloudinary.uploadImage(
+        files.condition_report[0],
+      );
+      await unlink(files.condition_report[0].path);
+    }
+
     const images = await this.cloudinary.uploadMultipleImages(
       files.images,
     );
