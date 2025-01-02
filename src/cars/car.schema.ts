@@ -32,54 +32,57 @@ export class Car {
   @Prop({ required: true })
   finance: string;
 
-  @Prop({ required: true })
+  @Prop({ default: 'car' })
+  type: string;
+
+  @Prop()
   fuel_consumption: string;
 
   @Prop({ required: true })
   body_type: string;
 
-  @Prop({ required: true })
+  @Prop()
   engine_capacity: string;
 
-  @Prop({ required: true })
+  @Prop()
   variant: string;
 
-  @Prop({ required: true })
+  @Prop()
   number_of_seats: string;
 
-  @Prop({ required: true })
+  @Prop()
   colour: string;
 
-  @Prop({ required: true })
+  @Prop()
   number_of_doors: string;
 
   @Prop({ required: true })
   stock_number: string;
 
-  @Prop({ required: true })
+  @Prop()
   vehicle_service_history: string;
 
   // @Prop({ required: true })
   @Prop()
   roadworthy_voucher: string;
 
-  @Prop({ required: true })
+  @Prop()
   spare_key: string;
 
   // @Prop({ required: true })
   @Prop()
   condition_report: string;
 
-  @Prop({ required: true })
+  @Prop()
   warranty: string;
 
-  @Prop({ required: true })
+  @Prop()
   kilowatts: string;
 
-  @Prop({ required: true })
+  @Prop()
   cylinder_layout: string;
 
-  @Prop({ required: true })
+  @Prop()
   gears: string;
 
   @Prop()
@@ -109,9 +112,6 @@ export class Car {
 
   @Prop({ default: 'active' })
   status: string;
-
-  @Prop({ default: 'car' })
-  type: string;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);
