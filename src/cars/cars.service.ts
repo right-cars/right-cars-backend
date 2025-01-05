@@ -28,11 +28,16 @@ export class CarsService {
       await unlink(files.condition_report[0].path);
     }
 
+    const mainImage = await this.cloudinary.uploadImage(
+      files.mainImage[0],
+    );
+    await unlink(files.mainImage[0].path);
+
     const images = await this.cloudinary.uploadMultipleImages(
       files.images,
     );
 
-    const newCar = new this.carModel({ ...createCarDto, roadworthy_voucher, condition_report, images });
+    const newCar = new this.carModel({ ...createCarDto, roadworthy_voucher, condition_report, images, mainImage });
     return newCar.save();
   }
 

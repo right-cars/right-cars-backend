@@ -103,6 +103,9 @@ export class Car {
   @Prop()
   feature_6?: string;
 
+  @Prop({ required: true })
+  mainImage: string;
+
   // @Prop({ type: [String], required: true })
   @Prop({ type: [String] })
   images: string[];

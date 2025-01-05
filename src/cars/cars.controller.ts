@@ -14,12 +14,15 @@ export class CarsController {
     FileFieldsInterceptor(
       [
         { name: 'images', maxCount: 12 },
+        { name: 'mainImage', maxCount: 1 },
         { name: 'roadworthy_voucher', maxCount: 1 },
         { name: 'condition_report', maxCount: 1 },
       ],
       multerConfig)
   )
-  addCar(@Body() createCarDto: CreateCarDto, @UploadedFiles() files: { images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
+  addCar(
+    @Body() createCarDto: CreateCarDto, 
+    @UploadedFiles() files: { mainImage: Express.Multer.File[], images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
     return this.carsService.create({ ...createCarDto }, files);
   }
 
