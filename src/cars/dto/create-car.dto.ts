@@ -20,8 +20,8 @@ export class CreateCarDto {
   @IsString() @IsOptional() number_of_doors: string;
   @IsString() stock_number: string;
   @IsString() @IsOptional() vehicle_service_history: string;
-  @IsString() @IsOptional() spare_key: string;
-  @IsString() @IsOptional() warranty: string;
+  @IsString() @IsOptional() spare_key: string | boolean;
+  @IsString() @IsOptional() warranty: string | boolean;
   @IsString() @IsOptional() kilowatts: string;
   @IsString() @IsOptional() cylinder_layout: string;
   @IsString() @IsOptional() gears: string;

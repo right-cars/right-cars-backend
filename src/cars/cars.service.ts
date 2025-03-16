@@ -37,6 +37,14 @@ export class CarsService {
       files.images,
     );
 
+    if(createCarDto.spare_key && typeof createCarDto.spare_key === "string") {
+      createCarDto.spare_key = createCarDto.spare_key === 'true';
+    }
+
+    if(createCarDto.warranty && typeof createCarDto.warranty === "string") {
+      createCarDto.warranty = createCarDto.warranty === 'true';
+    }
+
     const newCar = new this.carModel({ ...createCarDto, roadworthy_voucher, condition_report, images, mainImage });
     return newCar.save();
   }
