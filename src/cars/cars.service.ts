@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Car, CarDocument } from './car.schema';
+import axios from "axios";
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarStatusDto } from './dto/update-car-status.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -11,41 +12,45 @@ import {unlink} from "node:fs/promises";
 export class CarsService {
   constructor(@InjectModel(Car.name) private carModel: Model<CarDocument>, private cloudinary: CloudinaryService) {}
 
+  // async importFromAutotrader() {
+  //   return axios.get("https://services.autotrader.co.za/api/syndication/v1.0/listings", {
+  //     auth: {
+  //       username: "Right-Cars@autotrader.co.za",
+  //       password: "Dy647hedQQx5417GH"
+  //     }
+  //   });
+  // }
+
   async create(createCarDto: CreateCarDto, files): Promise<Car> {
-    let roadworthy_voucher = null;
-    if(files.roadworthy_voucher) {
-      roadworthy_voucher = await this.cloudinary.uploadImage(
-        files.roadworthy_voucher[0],
+    let dekraReport = null;
+    if(files.dekraReport) {
+      dekraReport = await this.cloudinary.uploadImage(
+        files.dekraReport[0],
       );
-      await unlink(files.roadworthy_voucher[0].path);
+      await unlink(files.dekraReport[0].path);
     }
 
-    let condition_report = null;
-    if(files.condition_report) {
-      condition_report = await this.cloudinary.uploadImage(
-        files.condition_report[0],
+    let conditionReport = null;
+    if(files.conditionReport) {
+      conditionReport = await this.cloudinary.uploadImage(
+        files.conditionReport[0],
       );
-      await unlink(files.condition_report[0].path);
+      await unlink(files.conditionReport[0].path);
     }
-
-    const mainImage = await this.cloudinary.uploadImage(
-      files.mainImage[0],
-    );
-    await unlink(files.mainImage[0].path);
 
     const images = await this.cloudinary.uploadMultipleImages(
       files.images,
     );
 
-    if(createCarDto.spare_key && typeof createCarDto.spare_key === "string") {
-      createCarDto.spare_key = createCarDto.spare_key === 'true';
+    if(createCarDto.spareKey && typeof createCarDto.spareKey === "string") {
+      createCarDto.spareKey = createCarDto.spareKey === 'true';
     }
 
     if(createCarDto.warranty && typeof createCarDto.warranty === "string") {
       createCarDto.warranty = createCarDto.warranty === 'true';
     }
 
-    const newCar = new this.carModel({ ...createCarDto, roadworthy_voucher, condition_report, images, mainImage });
+    const newCar = new this.carModel({ ...createCarDto, dekraReport, conditionReport, images });
     return newCar.save();
   }
 
@@ -59,21 +64,21 @@ export class CarsService {
 
   async update(id: string, updateCarDto: CreateCarDto, files): Promise<Car> {
     const updateFiles = {};
-    if(files.roadworthy_voucher) {
-      const roadworthy_voucher = await this.cloudinary.uploadImage(
-        files.roadworthy_voucher[0],
+    if(files.dekraReport) {
+      const dekraReport = await this.cloudinary.uploadImage(
+        files.dekraReport[0],
       );
-      await unlink(files.roadworthy_voucher[0].path);
+      await unlink(files.dekraReport[0].path);
       // @ts-expect-error: may be empty
-      updateFiles.roadworthy_voucher = roadworthy_voucher;
+      updateFiles.dekraReport = dekraReport;
     }
-   if(files.condition_report) {
-     const condition_report = await this.cloudinary.uploadImage(
-       files.condition_report[0],
+   if(files.conditionReport) {
+     const conditionReport = await this.cloudinary.uploadImage(
+       files.conditionReport[0],
      );
-     await unlink(files.condition_report[0].path);
+     await unlink(files.conditionReport[0].path);
      // @ts-expect-error: may be empty
-      updateFiles.condition_report = condition_report;
+      updateFiles.conditionReport = conditionReport;
    }
    if(files.images) {
      const images = await this.cloudinary.uploadMultipleImages(

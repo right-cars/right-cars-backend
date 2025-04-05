@@ -21,7 +21,7 @@ export class CarsController {
       multerConfig)
   )
   addCar(
-    @Body() createCarDto: CreateCarDto, 
+    @Body() createCarDto: CreateCarDto,
     @UploadedFiles() files: { mainImage: Express.Multer.File[], images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
     return this.carsService.create({ ...createCarDto }, files);
   }
@@ -30,6 +30,11 @@ export class CarsController {
   async findAll() {
     return this.carsService.findAll();
   }
+
+  // @Get('/import')
+  // async importFromAutotrader() {
+  //   return this.carsService.importFromAutotrader();
+  // }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {

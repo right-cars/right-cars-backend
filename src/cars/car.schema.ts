@@ -9,13 +9,13 @@ export class Car {
   make: string;
 
   @Prop({ required: true })
-  km: string;
+  mileageInKm: string;
 
   @Prop({ required: true })
   model: string;
 
   @Prop({ required: true })
-  fuel: string;
+  fuelType: string;
 
   @Prop({ required: true })
   year: string;
@@ -26,95 +26,98 @@ export class Car {
   @Prop({ required: true })
   price: string;
 
-  @Prop({ required: true })
-  drive_type: string;
-
-  @Prop({ required: true })
-  finance: string;
-
-  @Prop({ default: 'car' })
-  type: string;
+  @Prop()
+  driveType?: string;
 
   @Prop()
-  fuel_consumption: string;
+  finance?: string;
 
-  @Prop({ required: true })
-  body_type: string;
-
-  @Prop()
-  engine_capacity: string;
+  @Prop({ default: 'Cars' })
+  vehicleCategory: string;
 
   @Prop()
-  variant: string;
-
-  @Prop()
-  number_of_seats: string;
-
-  @Prop()
-  colour: string;
-
-  @Prop()
-  number_of_doors: string;
+  fuelConsumption?: string;
 
   @Prop({ required: true })
-  stock_number: string;
+  bodyType: string;
 
   @Prop()
-  vehicle_service_history: string;
-
-  // @Prop({ required: true })
-  @Prop()
-  roadworthy_voucher: string;
+  engineCapacityInCc?: string;
 
   @Prop()
-  spare_key: boolean;
-
-  // @Prop({ required: true })
-  @Prop()
-  condition_report: string;
+  variant?: string;
 
   @Prop()
-  warranty: boolean;
+  seats?: string;
 
   @Prop()
-  kilowatts: string;
+  colour?: string;
 
   @Prop()
-  cylinder_layout: string;
-
-  @Prop()
-  gears: string;
-
-  @Prop()
-  feature_1?: string;
-
-  @Prop()
-  feature_2?: string;
-
-  @Prop()
-  feature_3?: string;
-
-  @Prop()
-  feature_4?: string;
-
-  @Prop()
-  feature_5?: string;
-
-  @Prop()
-  feature_6?: string;
+  doors?: string;
 
   @Prop({ required: true })
-  mainImage: string;
+  stockNumber?: string;
 
-  // @Prop({ type: [String], required: true })
+  @Prop()
+  vehicleServiceHistory?: string;
+
+  @Prop()
+  dekraReport?: string;
+
+  @Prop()
+  spareKey?: boolean;
+
+  @Prop()
+  conditionReport?: string;
+
+  @Prop()
+  warranty?: boolean;
+
+  @Prop()
+  kilowatts?: string;
+
+  @Prop()
+  cylinderLayout?: string;
+
+  @Prop()
+  gears?: string;
+
   @Prop({ type: [String] })
-  images: string[];
+  features?: string;
+
+  @Prop({ type: [String] })
+  imageUrls: string[];
 
   @Prop()
   video?: string;
 
   @Prop({ default: 'active' })
   status: string;
+
+  @Prop()
+  autotraderId?: number;
+
+  @Prop()
+  description?: string;
+
+  @Prop()
+  transmissionDrive?: string;
+
+  @Prop()
+  dealerId?: number;
+
+  @Prop()
+  dealerLogoUrl?: string;
+
+  @Prop()
+  tummCode?: number;
+
+  @Prop()
+  registrationNumber?: string;
+
+  @Prop({ type: Object })
+  dealerContactInformation?: object;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);
