@@ -8,16 +8,16 @@ export class CreateCarDto {
   @IsString() year: string;
   @IsString() transmission: string;
   @IsString() price: string;
-  @IsString() @IsOptional() drive_type: string;
+  @IsString() @IsOptional() driveType: string;
   @IsString() @IsOptional() finance: string;
   @IsString() vehicleCategory: string;
   @IsString() @IsOptional() fuelConsumption: string;
   @IsString() bodyType: string;
-  @IsString() @IsOptional() engineCapacityInCc: string;
+  @IsString() @IsOptional() engineCapacity: string;
   @IsString() @IsOptional() variant: string;
-  @IsString() @IsOptional() seats: string;
+  @IsString() @IsOptional() numberOfSeats: string;
   @IsString() @IsOptional() colour: string;
-  @IsString() @IsOptional() doors: string;
+  @IsString() @IsOptional() numberOfDoors: string;
   @IsString() stockNumber: string;
   @IsString() @IsOptional() vehicleServiceHistory: string;
   @IsString() @IsOptional() spareKey: string | boolean;
@@ -25,6 +25,11 @@ export class CreateCarDto {
   @IsString() @IsOptional() kilowatts: string;
   @IsString() @IsOptional() cylinderLayout: string;
   @IsString() @IsOptional() gears: string;
-  @IsArray() @IsString({ each: true }) @IsOptional() features?: string[];
+  @IsString() @IsOptional() feature_1: string;
+  @IsString() @IsOptional() feature_2: string;
+  @IsString() @IsOptional() feature_3: string;
+  @IsString() @IsOptional() feature_4: string;
+  @IsString() @IsOptional() feature_5: string;
+  @IsString() @IsOptional() feature_6: string;
   @IsString() @IsOptional() video?: string;
 }

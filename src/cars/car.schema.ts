@@ -32,7 +32,7 @@ export class Car {
   @Prop()
   finance?: string;
 
-  @Prop({ default: 'Cars' })
+  @Prop({ default: 'car' })
   vehicleCategory: string;
 
   @Prop()
@@ -42,19 +42,19 @@ export class Car {
   bodyType: string;
 
   @Prop()
-  engineCapacityInCc?: string;
+  engineCapacity?: string;
 
   @Prop()
   variant?: string;
 
   @Prop()
-  seats?: string;
+  numberOfSeats?: string;
 
   @Prop()
   colour?: string;
 
   @Prop()
-  doors?: string;
+  numberOfDoors?: string;
 
   @Prop({ required: true })
   stockNumber?: string;
@@ -83,11 +83,29 @@ export class Car {
   @Prop()
   gears?: string;
 
-  @Prop({ type: [String] })
-  features?: string;
+  @Prop()
+  feature_1?: string;
+
+  @Prop()
+  feature_2?: string;
+
+  @Prop()
+  feature_3?: string;
+
+  @Prop()
+  feature_4?: string;
+
+  @Prop()
+  feature_5?: string;
+
+  @Prop()
+  feature_6?: string;
+
+  @Prop()
+  mainImage: string;
 
   @Prop({ type: [String] })
-  imageUrls: string[];
+  images: string[];
 
   @Prop()
   video?: string;
@@ -96,28 +114,13 @@ export class Car {
   status: string;
 
   @Prop()
-  autotraderId?: number;
-
-  @Prop()
   description?: string;
 
   @Prop()
-  transmissionDrive?: string;
-
-  @Prop()
-  dealerId?: number;
-
-  @Prop()
-  dealerLogoUrl?: string;
-
-  @Prop()
-  tummCode?: number;
+  tummCode?: string;
 
   @Prop()
   registrationNumber?: string;
-
-  @Prop({ type: Object })
-  dealerContactInformation?: object;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);

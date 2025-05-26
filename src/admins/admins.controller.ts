@@ -12,7 +12,6 @@ export class AdminsController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(password);
     const result = await this.adminsService.login(password, req);
 
     return result;

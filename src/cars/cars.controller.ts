@@ -9,20 +9,25 @@ import { multerConfig } from '../multer.config';
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
+  @Post("action")
+  action() {
+    return this.carsService.action();
+  }
+
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor(
       [
         { name: 'images', maxCount: 12 },
         { name: 'mainImage', maxCount: 1 },
-        { name: 'roadworthy_voucher', maxCount: 1 },
-        { name: 'condition_report', maxCount: 1 },
+        { name: 'dekraReport', maxCount: 1 },
+        { name: 'conditionReport', maxCount: 1 },
       ],
       multerConfig)
   )
   addCar(
     @Body() createCarDto: CreateCarDto,
-    @UploadedFiles() files: { mainImage: Express.Multer.File[], images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
+    @UploadedFiles() files: { mainImage: Express.Multer.File[], images: Express.Multer.File[], dekraReport: Express.Multer.File[], conditionReport: Express.Multer.File[] }) {
     return this.carsService.create({ ...createCarDto }, files);
   }
 
@@ -46,12 +51,12 @@ export class CarsController {
     FileFieldsInterceptor(
       [
         { name: 'images', maxCount: 12 },
-        { name: 'roadworthy_voucher', maxCount: 1 },
-        { name: 'condition_report', maxCount: 1 },
+        { name: 'dekraReport', maxCount: 1 },
+        { name: 'conditionReport', maxCount: 1 },
       ],
       multerConfig)
   )
-  async update(@Param('id') id: string, @Body() updateCarDto: CreateCarDto, @UploadedFiles() files: { images: Express.Multer.File[], roadworthy_voucher: Express.Multer.File[], condition_report: Express.Multer.File[] }) {
+  async update(@Param('id') id: string, @Body() updateCarDto: CreateCarDto, @UploadedFiles() files: { images: Express.Multer.File[], dekraReport: Express.Multer.File[], conditionReport: Express.Multer.File[] }) {
     return this.carsService.update(id, updateCarDto, files);
   }
 
