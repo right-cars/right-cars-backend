@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseInterceptors, UploadedFiles, Patch } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseInterceptors,
+  UploadedFiles,
+  Patch,
+} from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarStatusDto } from './dto/update-car-status.dto';
@@ -9,25 +20,33 @@ import { multerConfig } from '../multer.config';
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
-  @Post("action")
-  action() {
-    return this.carsService.action();
-  }
+  // @Post("action")
+  // action() {
+  //   return this.carsService.action();
+  // }
 
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'images', maxCount: 12 },
+        { name: 'images', maxCount: 20 },
         { name: 'mainImage', maxCount: 1 },
         { name: 'dekraReport', maxCount: 1 },
         { name: 'conditionReport', maxCount: 1 },
       ],
-      multerConfig)
+      multerConfig,
+    ),
   )
   addCar(
-    @Body() createCarDto: CreateCarDto,
-    @UploadedFiles() files: { mainImage: Express.Multer.File[], images: Express.Multer.File[], dekraReport: Express.Multer.File[], conditionReport: Express.Multer.File[] }) {
+    @Body() createCarDto,
+    @UploadedFiles()
+    files: {
+      mainImage: Express.Multer.File[];
+      images: Express.Multer.File[];
+      dekraReport: Express.Multer.File[];
+      conditionReport: Express.Multer.File[];
+    },
+  ) {
     return this.carsService.create({ ...createCarDto }, files);
   }
 
@@ -54,9 +73,19 @@ export class CarsController {
         { name: 'dekraReport', maxCount: 1 },
         { name: 'conditionReport', maxCount: 1 },
       ],
-      multerConfig)
+      multerConfig,
+    ),
   )
-  async update(@Param('id') id: string, @Body() updateCarDto: CreateCarDto, @UploadedFiles() files: { images: Express.Multer.File[], dekraReport: Express.Multer.File[], conditionReport: Express.Multer.File[] }) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCarDto: CreateCarDto,
+    @UploadedFiles()
+    files: {
+      images: Express.Multer.File[];
+      dekraReport: Express.Multer.File[];
+      conditionReport: Express.Multer.File[];
+    },
+  ) {
     return this.carsService.update(id, updateCarDto, files);
   }
 
@@ -66,7 +95,10 @@ export class CarsController {
   }
 
   @Patch(':id/status')
-  async updateStatus(@Param('id') id: string, @Body() updateCarStatusDto: UpdateCarStatusDto) {
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() updateCarStatusDto: UpdateCarStatusDto,
+  ) {
     return this.carsService.updateStatus(id, updateCarStatusDto);
   }
 }
