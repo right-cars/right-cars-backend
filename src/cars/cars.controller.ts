@@ -29,7 +29,7 @@ export class CarsController {
   @UseInterceptors(
     FileFieldsInterceptor(
       [
-        { name: 'images', maxCount: 20 },
+        { name: 'images', maxCount: 22 },
         { name: 'mainImage', maxCount: 1 },
         { name: 'dekraReport', maxCount: 1 },
         { name: 'conditionReport', maxCount: 1 },

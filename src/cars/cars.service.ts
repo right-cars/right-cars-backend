@@ -52,11 +52,11 @@ export class CarsService {
       await unlink(files.conditionReport[0].path);
     }
 
-    const mainImage = await this.cloudinary.uploadImage(
-      files.mainImage[0],
-    );
+    const mainImage = await this.cloudinary.uploadImage(files.mainImage[0]);
+    await unlink(files.mainImage[0].path);
 
     const images = await this.cloudinary.uploadMultipleImages(files.images);
+    await Promise.all(files.images.map(({ path }) => unlink(path)));
 
     if (createCarDto.spareKey && typeof createCarDto.spareKey === 'string') {
       createCarDto.spareKey = createCarDto.spareKey === 'true';
@@ -103,9 +103,7 @@ export class CarsService {
       updateFiles.conditionReport = conditionReport;
     }
     if (files.mainImage) {
-      const mainImage = await this.cloudinary.uploadImage(
-        files.mainImage[0],
-      );
+      const mainImage = await this.cloudinary.uploadImage(files.mainImage[0]);
       await unlink(files.mainImage[0].path);
       // @ts-expect-error: may be empty
       updateFiles.mainImage = mainImage;
@@ -131,6 +129,13 @@ export class CarsService {
   }
 
   async remove(id: string): Promise<Car> {
+    const car = await this.findOne(id);
+    await this.cloudinary.deleteFileByUrl(car.mainImage);
+    await this.cloudinary.deleteFileByUrl(car.dekraReport);
+    await this.cloudinary.deleteFileByUrl(car.conditionReport);
+    await Promise.all(
+      car.images.map((url) => this.cloudinary.deleteFileByUrl(url)),
+    );
     return this.carModel.findByIdAndDelete(id).exec();
   }
 }
