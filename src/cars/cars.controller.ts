@@ -25,6 +25,11 @@ export class CarsController {
   //   return this.carsService.action();
   // }
 
+  @Get("/filters")
+  filters() {
+    return this.carsService.getFilters();
+  }
+
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor(

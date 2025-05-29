@@ -24,6 +24,82 @@ export class CarsService {
   //   });
   // }
 
+  async getFilters(): Promise<{
+    minPrice: number;
+    maxPrice: number;
+    minMileage: number;
+    maxMileage: number;
+    minYear: number;
+    maxYear: number;
+    makes: string[];
+  }> {
+    const result = await this.carModel.aggregate([
+      {
+        $addFields: {
+          numericPrice: {
+            $convert: {
+              input: '$price',
+              to: 'double',
+              onError: null,
+              onNull: null,
+            },
+          },
+          numericMileage: {
+            $convert: {
+              input: '$mileageInKm',
+              to: 'double',
+              onError: null,
+              onNull: null,
+            },
+          },
+          numericYear: {
+            $convert: {
+              input: '$year',
+              to: 'int',
+              onError: null,
+              onNull: null,
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          minPrice: { $min: '$numericPrice' },
+          maxPrice: { $max: '$numericPrice' },
+          minMileage: { $min: '$numericMileage' },
+          maxMileage: { $max: '$numericMileage' },
+          minYear: { $min: '$numericYear' },
+          maxYear: { $max: '$numericYear' },
+        },
+      },
+    ]);
+
+    const makes = await this.carModel.distinct('make').exec();
+  
+    if (!result.length) {
+      return {
+        minPrice: null,
+        maxPrice: null,
+        minMileage: null,
+        maxMileage: null,
+        minYear: null,
+        maxYear: null,
+        makes,
+      };
+    }
+  
+    return {
+      minPrice: result[0].minPrice,
+      maxPrice: result[0].maxPrice,
+      minMileage: result[0].minMileage,
+      maxMileage: result[0].maxMileage,
+      minYear: result[0].minYear,
+      maxYear: result[0].maxYear,
+      makes,
+    };
+  }
+  
   async action() {
     return await this.carModel.updateMany(
       { images: { $exists: true, $type: 'array', $ne: [] } }, // фильтр: есть images, это массив, не пустой
