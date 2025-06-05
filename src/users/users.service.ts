@@ -54,15 +54,16 @@ export class UsersService {
     });
 
     const user = await createdUser.save();
-    try {
-      await this.emailService.sendConfirmationEmail(user.email, token);
-      return user;
-    }
-    catch {
-      throw new InternalServerErrorException(
-        'Something wrong with email send',
-      );
-    }
+    return user;
+    // try {
+    //   await this.emailService.sendConfirmationEmail(user.email, token);
+    //   return user;
+    // }
+    // catch {
+    //   throw new InternalServerErrorException(
+    //     'Something wrong with email send',
+    //   );
+    // }
 
   }
 
