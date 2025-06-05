@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ConflictException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -53,8 +54,16 @@ export class UsersService {
     });
 
     const user = await createdUser.save();
-    await this.emailService.sendConfirmationEmail(user.email, token);
-    return user;
+    try {
+      await this.emailService.sendConfirmationEmail(user.email, token);
+      return user;
+    }
+    catch {
+      throw new InternalServerErrorException(
+        'Something wrong with email send',
+      );
+    }
+
   }
 
   async confirmEmail(token: string): Promise<string> {
@@ -96,5 +105,5 @@ export class UsersService {
     }
   }
 
-  
+
 }
