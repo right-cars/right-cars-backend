@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdminsModule } from './admins/admins.module';
 import { AdminsService } from './admins/admins.service';
 import { CarsModule } from './cars/cars.module';
-// import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AdminsController } from './admins/admins.controller';
@@ -24,7 +24,7 @@ import { AdminsController } from './admins/admins.controller';
     }),
     AdminsModule,
     CarsModule,
-    // UsersModule,
+    UsersModule,
     CloudinaryModule,],
   controllers: [AppController, AdminsController],
   providers: [AppService, AdminsService],

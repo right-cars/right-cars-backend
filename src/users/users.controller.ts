@@ -1,33 +1,19 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
-import { Request, Response } from 'express';
-import {RegisterDto} from './dto/register.dto';
+import { User } from './schemas/user.schema';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('register')
-  async register(
-    @Body() dto: RegisterDto
-  ) {
-    return this.usersService.register(dto);
+  async register(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.register(createUserDto);
   }
 
-  // @Post('login')
-  // async login(
-  //   @Body('password') password: string,
-  //   @Req() req: Request,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   const result = await this.adminsService.login(password, req);
-  //
-  //   return result;
-  // }
-  //
-  // @Post('logout')
-  // async logout(@Req() req: Request) {
-  //   // res.clearCookie('role');
-  //   return this.adminsService.logout(req);
-  // }
+  @Get('confirm')
+  async confirmEmail(@Query('token') token: string): Promise<string> {
+    return this.usersService.confirmEmail(token);
+  }
 }
