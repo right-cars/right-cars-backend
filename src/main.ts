@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from "express-session";
+import * as cookieParser from 'cookie-parser';
 
 import * as process from 'node:process';
 import { MongooseExceptionFilter } from './mongoose-exception.filter';
@@ -13,11 +14,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new MongooseExceptionFilter());
+  app.use(cookieParser());
 
   app.enableCors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
   });
+
 
   app.use(
     session({
