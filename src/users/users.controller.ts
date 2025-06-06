@@ -18,6 +18,11 @@ export class UsersController {
     return this.usersService.confirmEmail(token);
   }
 
+  @Post('resend-confirmation')
+  async resend(@Body('email') email: string) {
+    return this.usersService.resendConfirmationEmail(email);
+  }
+
   @Post('login')
   async login(
     @Body() body: { email: string; password: string },
@@ -36,7 +41,7 @@ export class UsersController {
   }
 
   @Get('current')
-  async me(@Req() req: Request & { cookies: any })  {
+  async me(@Req() req: Request & { cookies: any }) {
     const token = req.cookies?.jwt;
     if (!token) return { user: null };
 

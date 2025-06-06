@@ -14,7 +14,7 @@ export class EmailService {
   });
 
   async sendConfirmationEmail(to: string, token: string) {
-    const confirmationUrl = `${process.env.FRONTEND_URL}?token=${token}`;
+    const confirmationUrl = `${process.env.FRONTEND_URL}/confirm?token=${token}`;
 
     await this.transporter.sendMail({
       from: `"Right cars Support" <${process.env.EMAIL_USER}>`,

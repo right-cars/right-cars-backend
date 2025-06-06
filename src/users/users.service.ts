@@ -54,17 +54,35 @@ export class UsersService {
     });
 
     const user = await createdUser.save();
-    return user;
-    // try {
-    //   await this.emailService.sendConfirmationEmail(user.email, token);
-    //   return user;
-    // }
-    // catch {
-    //   throw new InternalServerErrorException(
-    //     'Something wrong with email send',
-    //   );
-    // }
+    try {
+      await this.emailService.sendConfirmationEmail(user.email, token);
+      return user;
+    } catch {
+      throw new InternalServerErrorException('Something wrong with email send');
+    }
+  }
 
+  async resendConfirmationEmail(email: string) {
+    const user = await this.userModel.findOne({ email });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException('Email is already confirmed');
+    }
+
+    try {
+      await this.emailService.sendConfirmationEmail(
+        user.email,
+        user.emailConfirmationToken,
+      );
+
+      return { message: 'Confirmation email resent' };
+    } catch {
+      throw new InternalServerErrorException('Something wrong with email send');
+    }
   }
 
   async confirmEmail(token: string): Promise<string> {
@@ -105,6 +123,4 @@ export class UsersService {
       return null;
     }
   }
-
-
 }
