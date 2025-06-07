@@ -1,8 +1,18 @@
-import { Controller, Req, Res, Get, Post, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Req,
+  Res,
+  Get,
+  Post,
+  Body,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { Request, Response } from 'express';
 import { User } from './schemas/user.schema';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +33,16 @@ export class UsersController {
     return this.usersService.resendConfirmationEmail(email);
   }
 
+  @Post('forgot')
+  forgot(@Body('email') email: string) {
+    return this.usersService.forgotPassword(email);
+  }
+
+  @Post('reset')
+  reset(@Body() dto: { token: string; newPassword: string }) {
+    return this.usersService.resetPassword(dto.token, dto.newPassword);
+  }
+
   @Post('login')
   async login(
     @Body() body: { email: string; password: string },
@@ -30,28 +50,38 @@ export class UsersController {
   ) {
     const token = await this.usersService.login(body.email, body.password);
 
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false, // true если HTTPS
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie('jwt', token, {
+    //   httpOnly: true,
+    //   sameSite: 'lax',
+    //   secure: false, // true если HTTPS
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
 
-    return { message: 'Logged in' };
+    // return { message: 'Logged in' };
+    return {
+      accessToken: token,
+    };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('current')
   async me(@Req() req: Request & { cookies: any }) {
-    const token = req.cookies?.jwt;
-    if (!token) return { user: null };
-
-    const user = await this.usersService.getUserFromToken(token);
+    //@ts-expect-error
+    const user = await this.usersService.findByEmail(req.user.email);
     return { user };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('update')
+  async updateUser(@Body() updateDto, @Req() req: Request & { cookies: any }) {
+    //@ts-expect-error
+    const updateUser = await this.usersService.updateUser(updateDto, req.user.email);
+    return updateUser;
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('jwt');
     return { message: 'Logged out' };
   }
 }

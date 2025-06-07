@@ -4,6 +4,7 @@ import {
   ConflictException,
   UnauthorizedException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -101,6 +102,53 @@ export class UsersService {
     return 'Email confirmed successfully!';
   }
 
+  async updateUser(body, email) {
+    const user = await this.findByEmail(email);
+    for(const key in body) {
+      user[key] = body[key];
+    }
+    await user.save();
+
+    return user;
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userModel.findOne({ email });
+    if (!user) throw new NotFoundException('User not found');
+  
+    const token = randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 1000 * 60 * 15); // 15 минут
+  
+    user.resetToken = token;
+    user.resetTokenExpires = expires;
+    await user.save();
+  
+    await this.emailService.sendPasswordResetEmail(user.email, token);
+  
+    return { message: 'Reset link sent' };
+  }
+  
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.userModel.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: new Date() },
+    });
+    if (!user) throw new BadRequestException('Token invalid or expired');
+  
+    user.password = await await bcrypt.hash(newPassword, 10); 
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+  
+    return { message: 'Password updated successfully' };
+  }
+
+  async generateJwt(user: User) {
+    const payload = { email: user.email };
+
+    return this.jwtService.sign(payload);
+  }
+
   async login(email: string, password: string) {
     const user = await this.findByEmail(email);
     if (!user || !user.isEmailConfirmed) {
@@ -111,14 +159,15 @@ export class UsersService {
     if (!isPasswordMatch)
       throw new UnauthorizedException('Invalid credentials');
 
-    const token = this.jwtService.sign({ sub: user._id });
-    return token;
+    return this.generateJwt(user);
+    // const token = this.jwtService.sign({ sub: user._id });
+    // return token;
   }
 
-  async getUserFromToken(token: string) {
+  async getUserFromEmail(token: string) {
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      return this.findById(payload.sub);
+      return this.findByEmail(payload.email);
     } catch {
       return null;
     }

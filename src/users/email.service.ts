@@ -24,4 +24,15 @@ export class EmailService {
              <a href="${confirmationUrl}">${confirmationUrl}</a>`,
     });
   }
+
+  async sendPasswordResetEmail(to: string, token: string) {
+    const resetUrl = `${process.env.FRONTEND_URL}/reset?token=${token}`;
+    
+    return this.transporter.sendMail({
+      from: `"Right cars Support" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: 'Password Reset',
+      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. Link expires in 15 minutes.</p>`,
+    });
+  }
 }
