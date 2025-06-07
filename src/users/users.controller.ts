@@ -4,6 +4,7 @@ import {
   Res,
   Get,
   Post,
+  Put,
   Body,
   Query,
   UseGuards,
@@ -27,6 +28,12 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findById(id);
+  }
+
+  @Put(':id')
+  async updateById(@Body() updateDto, @Param('id') id: string) {
+    const updateUser = await this.usersService.updateById(updateDto, id);
+    return updateUser;
   }
 
   @Post('register')

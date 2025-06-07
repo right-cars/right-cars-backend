@@ -106,6 +106,17 @@ export class UsersService {
     return 'Email confirmed successfully!';
   }
 
+  
+  async updateById(body, id) {
+    const user = await this.findById(id);
+    for(const key in body) {
+      user[key] = body[key];
+    }
+    await user.save();
+
+    return user;
+  }
+
   async updateUser(body, email) {
     const user = await this.findByEmail(email);
     for(const key in body) {
