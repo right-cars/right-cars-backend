@@ -8,6 +8,9 @@ export class User {
   @Prop({ default: 'unverified' })
   status: string;
 
+  @Prop({ default: 'regular' })
+  type: string;
+
   @Prop({ required: true })
   fullName: string;
 
@@ -36,9 +39,6 @@ export class User {
   resetTokenExpires?: Date;
 
   @Prop()
-  idNumber?: number;
-
-  @Prop()
   physicalAddress?: string;
 
   @Prop()
@@ -61,6 +61,15 @@ export class User {
 
   @Prop()
   postalCode?: string;
+
+  @Prop()
+  idOrDriverLicence?: string;
+
+  @Prop()
+  proofOfPhysicalAddress?: string;
+
+  @Prop()
+  deposit?: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

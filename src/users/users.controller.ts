@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -17,6 +18,16 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  async findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findById(id);
+  }
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {

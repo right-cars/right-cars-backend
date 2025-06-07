@@ -23,6 +23,10 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async findAll() {
+    return this.userModel.find().exec();
+  }
+
   async findByEmail(email: string) {
     return this.userModel.findOne({ email });
   }
