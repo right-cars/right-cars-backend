@@ -14,6 +14,8 @@ import { JwtService } from '@nestjs/jwt';
 import { EmailService } from './email.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { unlink } from 'node:fs/promises';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +23,7 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly emailService: EmailService,
     private readonly jwtService: JwtService,
+    private cloudinary: CloudinaryService,
   ) {}
 
   async findAll() {
@@ -123,6 +126,41 @@ export class UsersService {
       user[key] = body[key];
     }
     await user.save();
+    await this.checkAndUpdateStatus(user);
+
+    return user;
+  }
+
+  async checkAndUpdateStatus(user) {
+    const {isEmailConfirmed, emailConfirmationToken, resetToken, resetTokenExpires, deposit, ...other} = user._doc;
+    const unverified = Object.values(other).some(item => item === "");
+    if(unverified) {
+      user.status = "unverified";
+    } 
+    else {
+      user.status = "inProgress";
+    }
+    await user.save();
+    return true;
+  }
+
+  async updateUserDoc(files, email) {
+    const user = await this.findByEmail(email);
+
+    if (files.idOrDriverLicence) {
+      const idOrDriverLicence = await this.cloudinary.uploadDoc(files.idOrDriverLicence[0]);
+      await unlink(files.idOrDriverLicence[0].path);
+      user.idOrDriverLicence = idOrDriverLicence;
+    }
+
+    if (files.proofOfPhysicalAddress) {
+      const proofOfPhysicalAddress = await this.cloudinary.uploadDoc(files.proofOfPhysicalAddress[0]);
+      await unlink(files.proofOfPhysicalAddress[0].path);
+      user.proofOfPhysicalAddress = proofOfPhysicalAddress;
+    }
+
+    await user.save();
+    await this.checkAndUpdateStatus(user);
 
     return user;
   }

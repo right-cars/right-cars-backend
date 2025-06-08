@@ -6,10 +6,12 @@ import { UsersController } from './users.controller';
 import { User, UserSchema } from './schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
-console.log(process.env.JWT_SECRET)
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    CloudinaryModule,
     JwtModule.register({
       secret: "JzlWgadHsvB2tP887i1uyRWvSKVZdp4o",
       signOptions: { expiresIn: '7d' },

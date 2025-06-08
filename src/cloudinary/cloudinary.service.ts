@@ -27,6 +27,16 @@ export class CloudinaryService {
     }
   }
 
+  async uploadDoc(
+    file: Express.Multer.File,
+  ) {
+
+    const {url} = await v2.uploader.upload(file.path, {
+      folder: "documents"
+    });
+    return url;
+  }
+
   async uploadImage(
     file: Express.Multer.File,
   ) {

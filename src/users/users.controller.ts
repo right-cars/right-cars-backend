@@ -6,6 +6,8 @@ import {
   Post,
   Put,
   Body,
+  UseInterceptors,
+  UploadedFiles,
   Query,
   UseGuards,
   Param,
@@ -15,6 +17,8 @@ import { UsersService } from './users.service';
 import { Request, Response } from 'express';
 import { User } from './schemas/user.schema';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../multer.config';
 
 @Controller('users')
 export class UsersController {
@@ -25,12 +29,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('admin/:id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findById(id);
   }
 
-  @Put(':id')
+  @Put('/admin/:id')
   async updateById(@Body() updateDto, @Param('id') id: string) {
     const updateUser = await this.usersService.updateById(updateDto, id);
     return updateUser;
@@ -94,6 +98,30 @@ export class UsersController {
   async updateUser(@Body() updateDto, @Req() req: Request & { cookies: any }) {
     //@ts-expect-error
     const updateUser = await this.usersService.updateUser(updateDto, req.user.email);
+    return updateUser;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-doc')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'idOrDriverLicence', maxCount: 1 },
+        { name: 'proofOfPhysicalAddress', maxCount: 1 },
+      ],
+      multerConfig,
+    ),
+  )
+  async updateUserDoc(
+    @Req() req: Request & { cookies: any },
+    @UploadedFiles()
+    files: {
+      idOrDriverLicence: Express.Multer.File[];
+      proofOfPhysicalAddress: Express.Multer.File[];
+    },
+    ) {
+      //@ts-expect-error
+    const updateUser = await this.usersService.updateUserDoc(files, req.user.email);
     return updateUser;
   }
 
