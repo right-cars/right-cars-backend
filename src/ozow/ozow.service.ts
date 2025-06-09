@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import {createHash} from "node:crypto";
+import { createHash } from 'node:crypto';
 
 @Injectable()
 export class OzowService {
@@ -35,7 +35,15 @@ export class OzowService {
   }
 
   async initiatePayment(payloadData: any) {
-    const { BACKEND_URL, OZOW_API_URL, OZOW_API_KEY, OZOW_SITE_CODE } = process.env;
+    const { BACKEND_URL, OZOW_API_URL, OZOW_API_KEY, OZOW_SITE_CODE } =
+      process.env;
+
+      console.log({
+        BACKEND_URL,
+        OZOW_API_URL,
+        OZOW_API_KEY,
+        OZOW_SITE_CODE,
+      });
 
     const payload = {
       countryCode: 'ZA',
@@ -52,18 +60,22 @@ export class OzowService {
     };
 
     const hashCheck = this.generateRequestHash(payload);
-    
-    const { data } = await axios.post(
-      `${OZOW_API_URL}/PostPaymentRequest`,
-      { ...payload, hashCheck },
-      {
-        headers: {
-          ApiKey: OZOW_API_KEY,
+    try {
+      const { data } = await axios.post(
+        `${OZOW_API_URL}/PostPaymentRequest`,
+        { ...payload, hashCheck },
+        {
+          headers: {
+            ApiKey: OZOW_API_KEY,
+          },
         },
-      },
-    );
+      );
 
-    return data;
+      return data;
+    } catch {
+        //@ts-expect-error
+      console.log(error);
+    }
   }
 
   async handleFailed(data: any) {
