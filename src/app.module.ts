@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AdminsController } from './admins/admins.controller';
+import { OzowModule } from './ozow/ozow.module';
 
 @Module({
   imports: [
@@ -25,7 +26,9 @@ import { AdminsController } from './admins/admins.controller';
     AdminsModule,
     CarsModule,
     UsersModule,
-    CloudinaryModule,],
+    CloudinaryModule,
+    OzowModule,
+  ],
   controllers: [AppController, AdminsController],
   providers: [AppService, AdminsService],
 })
