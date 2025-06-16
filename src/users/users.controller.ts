@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Body,
   UseInterceptors,
   UploadedFiles,
@@ -43,6 +44,11 @@ export class UsersController {
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.register(createUserDto);
+  }
+
+  @Delete("/documents/:id")
+  async deleteDocument(@Param('id') id: string, @Query('name') name: string) {
+    return this.usersService.deleteDocument(id, name);
   }
 
   @Get('confirm')
@@ -100,6 +106,7 @@ export class UsersController {
     const updateUser = await this.usersService.updateUser(updateDto, req.user.email);
     return updateUser;
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Post('update-doc')

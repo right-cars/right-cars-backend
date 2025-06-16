@@ -131,6 +131,14 @@ export class UsersService {
     return user;
   }
 
+  async deleteDocument(id, documentName) {
+    const user = await this.findById(id);
+    user[documentName] = "";
+    await this.checkAndUpdateStatus(user);
+
+    return user;
+  }
+
   async checkAndUpdateStatus(user) {
     const {isEmailConfirmed, emailConfirmationToken, resetToken, resetTokenExpires, deposit, ...other} = user._doc;
     const unverified = Object.values(other).some(item => item === "");
@@ -170,7 +178,7 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
   
     const token = randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 1000 * 60 * 15); // 15 минут
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24); 
   
     user.resetToken = token;
     user.resetTokenExpires = expires;

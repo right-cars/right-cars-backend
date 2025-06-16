@@ -32,7 +32,7 @@ export class EmailService {
       from: `"Right cars Support" <${process.env.EMAIL_USER}>`,
       to,
       subject: 'Password Reset',
-      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. Link expires in 15 minutes.</p>`,
+      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. Link expires in 24 hours.</p>`,
     });
   }
 }
