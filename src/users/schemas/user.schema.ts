@@ -56,6 +56,9 @@ export class User {
   @Prop()
   proofOfPhysicalAddress?: string;
 
+  @Prop({ type: [String] })
+  verifyDocuments?: string[];
+
   @Prop()
   deposit?: number;
 

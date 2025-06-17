@@ -51,6 +51,11 @@ export class UsersController {
     return this.usersService.deleteDocument(id, name);
   }
 
+  @Put("/documents/:id")
+  async verifyDocument(@Param('id') id: string, @Query('name') name: string) {
+    return this.usersService.verifyDocument(id, name);
+  }
+
   @Get('confirm')
   async confirmEmail(@Query('token') token: string): Promise<string> {
     return this.usersService.confirmEmail(token);

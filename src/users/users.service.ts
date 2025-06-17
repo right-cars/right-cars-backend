@@ -139,6 +139,17 @@ export class UsersService {
     return user;
   }
 
+  async verifyDocument(id, documentName) {
+    const user = await this.findById(id);
+    user.verifyDocuments.push(documentName);
+    if(user.verifyDocuments.includes("idOrDriverLicence") && user.verifyDocuments.includes("proofOfPhysicalAddress")){
+      user.status = "verified";
+    }
+    await user.save();
+
+    return user;
+  }
+
   async checkAndUpdateStatus(user) {
     const {isEmailConfirmed, emailConfirmationToken, resetToken, resetTokenExpires, deposit, ...other} = user._doc;
     const unverified = Object.values(other).some(item => item === "");
