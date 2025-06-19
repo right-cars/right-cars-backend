@@ -27,14 +27,21 @@ export class CloudinaryService {
     }
   }
 
+  getResourceType(mime: string): 'image' | 'raw' | 'video' {
+    if (mime.startsWith('image/')) return 'image';
+    if (mime.startsWith('video/')) return 'video';
+    return 'raw'; // для PDF, DOCX, ZIP и т.п.
+  }
+
   async uploadDoc(
     file: Express.Multer.File,
   ) {
-
-    const {url} = await v2.uploader.upload(file.path, {
-      folder: "documents"
+    const resource_type = this.getResourceType(file.mimetype);
+    const {secure_url} = await v2.uploader.upload(file.path, {
+      folder: "documents",
+      resource_type,
     });
-    return url;
+    return secure_url;
   }
 
   async uploadImage(
