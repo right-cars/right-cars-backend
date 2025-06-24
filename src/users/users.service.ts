@@ -151,8 +151,8 @@ export class UsersService {
   }
 
   async checkAndUpdateStatus(user) {
-    const {isEmailConfirmed, emailConfirmationToken, resetToken, resetTokenExpires, deposit, ...other} = user._doc;
-    const unverified = Object.values(other).some(item => item === "");
+    const {physicalAddress, cityOrTown, code, suburb, postalPhysicalAddress, postalCityOrTown, postalCode, postalSuburb} = user._doc;
+    const unverified = (!physicalAddress|| !cityOrTown || !code || !suburb || !postalPhysicalAddress || !postalCityOrTown || !postalCode || !postalSuburb);
     if(unverified) {
       user.status = "unverified";
     } 
