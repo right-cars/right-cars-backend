@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {  v2 } from 'cloudinary';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class CloudinaryService {
@@ -13,12 +14,12 @@ export class CloudinaryService {
   async deleteFileByUrl(url: string | undefined) {
     if(!url) return;
     const publicId = this.extractPublicId(url);
-  
+
     if (!publicId) {
       console.error('Не удалось извлечь public_id из URL:', url);
       return;
     }
-  
+
     try {
       const result = await v2.uploader.destroy(publicId);
       console.log(`Удаление файла ${publicId}:`, result);
@@ -47,11 +48,29 @@ export class CloudinaryService {
   async uploadImage(
     file: Express.Multer.File,
   ) {
+    return new Promise((resolve, reject) => {
+      const uploadStream = v2.uploader.upload_stream(
+        {
+          folder: 'cars',
+          resource_type: 'image',
+          format: 'webp',
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.url);
+        },
+      );
 
-    const {url} = await v2.uploader.upload(file.path, {
-      folder: "cars"
+      // 🔁 Передаём поток Sharp напрямую в Cloudinary
+      sharp(file.path)
+        .resize({ width: 1200, withoutEnlargement: true })
+        .toFormat('webp', { quality: 85 })
+        .pipe(uploadStream);
     });
-    return url;
+    // const {url} = await v2.uploader.upload(file.path, {
+    //   folder: "cars"
+    // });
+    // return url;
   }
 
   async uploadMultipleImages(files: Express.Multer.File[]) {
