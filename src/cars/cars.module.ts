@@ -12,5 +12,6 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
   ],
   controllers: [CarsController],
   providers: [CarsService],
+  exports: [CarsService],
 })
 export class CarsModule {}

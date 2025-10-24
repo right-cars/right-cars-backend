@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AdminsController } from './admins/admins.controller';
 import { OzowModule } from './ozow/ozow.module';
+import { AuctionsModule } from './auctions/auctions.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { OzowModule } from './ozow/ozow.module';
     UsersModule,
     CloudinaryModule,
     OzowModule,
+    AuctionsModule,
   ],
   controllers: [AppController, AdminsController],
   providers: [AppService, AdminsService],

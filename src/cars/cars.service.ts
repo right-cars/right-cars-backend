@@ -24,6 +24,16 @@ export class CarsService {
   //   });
   // }
 
+  async findById(id: string) {
+    // Используем уже существующий findOne
+    return this.findOne(id);
+  }
+
+  async setAuctionFlag(id: string, isOnAuction: boolean) {
+    // Используем updateStatus для установки флага
+    return this.updateStatus(id, { isOnAuction });
+  }
+
   async getFilters(): Promise<{
     minPrice: number;
     maxPrice: number;

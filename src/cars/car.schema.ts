@@ -121,6 +121,9 @@ export class Car {
 
   @Prop()
   registrationNumber?: string;
+
+  @Prop({ default: false })
+  isOnAuction: boolean;
 }
 
 export const CarSchema = SchemaFactory.createForClass(Car);

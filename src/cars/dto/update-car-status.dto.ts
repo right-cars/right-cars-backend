@@ -1,5 +1,11 @@
-import { IsString } from 'class-validator';
+import { IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class UpdateCarStatusDto {
-  @IsString() status: string;
+  @IsOptional()
+  @IsString()
+  status?: string; 
+
+  @IsOptional()
+  @IsBoolean()
+  isOnAuction?: boolean;
 }
