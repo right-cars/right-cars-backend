@@ -20,6 +20,28 @@ export class AuctionsService {
     private readonly carsService: CarsService,
   ) {}
 
+  async getCarsWithAuctions() {
+    const auctions = await this.auctionModel
+      .find()
+      .populate('car') // подтягиваем данные машины
+      .lean();
+  
+    // Если нужно вернуть в одном объекте "car + auctionData"
+    return auctions.map((a) => ({
+      auctionId: a._id,
+      auctionStatus: a.status,
+      startDate: a.startDate,
+      startTime: a.startTime,
+      endDate: a.endDate,
+      endTime: a.endTime,
+      startPrice: a.startPrice,
+      currentPrice: a.currentPrice,
+      bidExtensionTime: a.bidExtensionTime,
+      car: a.car, // все данные машины
+    }));
+  }
+  
+
   /**
    * Создание нового аукциона
    */

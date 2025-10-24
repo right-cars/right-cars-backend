@@ -15,6 +15,11 @@ import { PlaceBidDto } from './dto/place-bid.dto';
 export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
 
+  @Get('cars')
+  async getCarsWithAuctions() {
+    return this.auctionsService.getCarsWithAuctions();
+  }
+
   @Post()
   create(@Body() dto: CreateAuctionDto) {
     return this.auctionsService.create(dto);
