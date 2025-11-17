@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Car, CarDocument } from './car.schema';
@@ -6,7 +6,10 @@ import { Car, CarDocument } from './car.schema';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarStatusDto } from './dto/update-car-status.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { unlink } from 'node:fs/promises';
+import { unlink, access } from 'node:fs/promises';
+import { constants } from 'fs';
+import * as path from 'path';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class CarsService {
@@ -163,7 +166,7 @@ export class CarsService {
   }
 
   async findAll(): Promise<Car[]> {
-    return this.carModel.find().exec();
+    return this.carModel.find({isOnAuction: false}).exec();
   }
 
   async findOne(id: string): Promise<Car> {
@@ -223,5 +226,85 @@ export class CarsService {
       car.images.map((url) => this.cloudinary.deleteFileByUrl(url)),
     );
     return this.carModel.findByIdAndDelete(id).exec();
+  }
+
+  async updateImages(id: string, files): Promise<Car> {
+    const updateFiles = {};
+
+    if (files.mainImage) {
+      const original = files.mainImage[0];
+      try {
+        const normalizedPath = await this.normalizeImage(original.path);
+        const file = { ...original, path: normalizedPath };
+        const mainImage = await this.cloudinary.uploadImage(file);
+  
+        await this.safeUnlink(original.path);
+        await this.safeUnlink(normalizedPath);
+        //@ts-expect-error
+        updateFiles.mainImage = mainImage;
+      } catch (err) {
+        console.warn(`⚠️ Пропущено повреждённое mainImage: ${original.originalname}`);
+        await this.safeUnlink(original.path); // чистим исходник
+      }
+    }
+  
+    // 🖼️ Обработка массива images
+    if (files.images) {
+      const validFiles = [];
+  
+      for (const img of files.images) {
+        try {
+          const normalizedPath = await this.normalizeImage(img.path);
+          validFiles.push({ ...img, path: normalizedPath });
+        } catch (err) {
+          console.warn(`⚠️ Пропущено повреждённое изображение: ${img.originalname}`);
+          await this.safeUnlink(img.path);
+        }
+      }
+  
+      // ⬆️ теперь validFiles содержит только проверенные изображения
+      if (validFiles.length > 0) {
+        const images = await this.cloudinary.uploadMultipleImages(validFiles);
+        //@ts-expect-error
+        updateFiles.images = images;
+  
+        // чистим временные файлы
+        await Promise.all(validFiles.map((f) => this.safeUnlink(f.path)));
+      } else {
+        console.warn('⚠️ Все изображения оказались повреждёнными или пустыми');
+      }
+    }
+    return this.carModel
+      .findByIdAndUpdate(id, { ...updateFiles }, { new: true })
+      .exec();
+  }
+
+  private async normalizeImage(inputPath: string): Promise<string> {
+    const ext = path.extname(inputPath).toLowerCase();
+    const outputPath = inputPath.replace(ext, '.jpg');
+
+    try {
+      await sharp(inputPath)
+        .toFormat('jpeg', { quality: 90 })
+        .toFile(outputPath);
+
+      return outputPath;
+    } catch (err) {
+      console.error(`❌ Не удалось перекодировать изображение ${inputPath}`, err);
+      throw new BadRequestException('Некорректный или повреждённый файл изображения');
+    }
+  }
+
+  private async safeUnlink(path: string) {
+    try {
+      await access(path, constants.F_OK); // проверяем, существует ли файл
+      await unlink(path);
+    } catch (err: any) {
+      if (err.code !== 'ENOENT') {
+        console.error(`❌ Ошибка при удалении файла: ${path}`, err);
+      } else {
+        console.warn(`⚠️ Файл уже удалён или не найден: ${path}`);
+      }
+    }
   }
 }

@@ -106,4 +106,25 @@ export class CarsController {
   ) {
     return this.carsService.updateStatus(id, updateCarStatusDto);
   }
+
+  @Put(':id/images')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'mainImage', maxCount: 1 },
+        { name: 'images', maxCount: 40 },
+      ],
+      multerConfig,
+    ),
+  )
+  async updateImages(
+    @Param('id') id: string,
+    @UploadedFiles()
+    files: {
+      mainImage: Express.Multer.File[];
+      images: Express.Multer.File[];
+    },
+  ) {
+    return this.carsService.updateImages(id, files);
+  }
 }
