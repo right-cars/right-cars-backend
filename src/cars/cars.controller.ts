@@ -107,6 +107,7 @@ export class CarsController {
     return this.carsService.updateStatus(id, updateCarStatusDto);
   }
 
+
   @Put(':id/images')
   @UseInterceptors(
     FileFieldsInterceptor(
