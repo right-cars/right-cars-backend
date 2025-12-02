@@ -22,10 +22,10 @@ export class AuctionsService {
 
   async getCarsWithAuctions() {
     const auctions = await this.auctionModel
-      .find()
+      .find({ status: { $in: ['scheduled', 'active'] } })
       .populate('car') // подтягиваем данные машины
       .lean();
-  
+  console.log(auctions);
     // Если нужно вернуть в одном объекте "car + auctionData"
     return auctions.map((a) => ({
       auctionId: a._id,
@@ -37,6 +37,7 @@ export class AuctionsService {
       startPrice: a.startPrice,
       currentPrice: a.currentPrice,
       bidExtensionTime: a.bidExtensionTime,
+      bids: a.bids,
       car: a.car, // все данные машины
     }));
   }
