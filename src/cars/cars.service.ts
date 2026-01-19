@@ -166,7 +166,7 @@ export class CarsService {
   }
 
   async findAll(): Promise<Car[]> {
-    return this.carModel.find({ isOnAuction: { $in: [false, null] } }).exec();
+    return this.carModel.find({ isOnAuction: { $in: [false, null] } }).sort({ createdAt: -1 }).exec();
   }
 
   async findOne(id: string): Promise<Car> {
