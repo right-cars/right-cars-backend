@@ -18,15 +18,6 @@ export class CarsService {
     private cloudinary: CloudinaryService,
   ) {}
 
-  // async importFromAutotrader() {
-  //   return axios.get("https://services.autotrader.co.za/api/syndication/v1.0/listings", {
-  //     auth: {
-  //       username: "Right-Cars@autotrader.co.za",
-  //       password: "Dy647hedQQx5417GH"
-  //     }
-  //   });
-  // }
-
   async findById(id: string) {
     // Используем уже существующий findOne
     return this.findOne(id);
